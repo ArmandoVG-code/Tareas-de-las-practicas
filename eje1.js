@@ -5,25 +5,19 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-rl.question("Ingrese el nombre del estudiante: ", (nom) => {
+rl.question("Ingrese un número entero positivo: ", (resp) => {
+    let num = parseInt(resp);
 
-    rl.question("Ingrese la nota del parcial 1: ", (r1) => {
-        let n1 = parseFloat(r1);
+    if (resp.trim() === "" || isNaN(num) || num < 2 || !Number.isInteger(Number(resp))) {
+        console.log("Error: ingrese un número entero mayor o igual a 2.");
+    } else {
+        let i = 2;
 
-        rl.question("Ingrese la nota del parcial 2: ", (r2) => {
-            let n2 = parseFloat(r2);
+        while (i <= num) {
+            console.log(i);
+            i += 2;
+        }
+    }
 
-            rl.question("Ingrese la nota del parcial 3: ", (r3) => {
-                let n3 = parseFloat(r3);
-
-                let prom = (n1 * 0.30) + (n2 * 0.30) + (n3 * 0.40);
-
-                console.log("\n--- REPORTE DE CALIFICACIONES ---");
-                console.log("Estudiante: " + nom);
-                console.log("Nota final: " + prom.toFixed(2));
-
-                rl.close();
-            });
-        });
-    });
+    rl.close();
 });
