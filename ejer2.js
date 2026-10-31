@@ -1,90 +1,78 @@
 import readline from "node:readline";
 
-const r1 = readline.createInterface({
+const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
-let NomHuesp;
-let CantNoches;
-let TarifaNoche;
-let TempReserva;
+function calcularCostoTotal(tarifaSeguro = 15, ...pesosPaquetes) {
+    let suma = 0;
 
-console.log("========== LIQUIDACIÓN DE HOSPEDAJE ==========");
+    for (let peso of pesosPaquetes) {
+        suma += peso;
+    }
 
-r1.question("Ingresa el nombre del huésped: ", (resp1) => {
-    NomHuesp = resp1.trim();
+    let total = (suma * 3.50) + tarifaSeguro;
 
-    r1.question("Ingresa la cantidad de noches: ", (resp2) => {
-        CantNoches = parseInt(resp2);
+    return total;
+}
 
-        r1.question("Ingresa la tarifa base por noche: $", (resp3) => {
-            TarifaNoche = parseFloat(resp3);
+function imprimirCotizacion(cliente, totalCobro) {
+    console.log("\n--- COTIZACIÓN DE ENVÍO ---");
+    console.log("Cliente: " + cliente);
+    console.log("Total a pagar: $" + totalCobro.toFixed(2));
+}
 
-            console.log("\n========== TEMPORADA DE RESERVA ==========");
-            console.log("1. Temporada Baja - Sin recargo");
-            console.log("2. Temporada Media - Recargo del 15%");
-            console.log("3. Temporada Alta - Recargo del 35%");
+rl.question("Ingrese el nombre del cliente: ", (nom) => {
 
-            r1.question("Selecciona una opción: ", (resp4) => {
-                TempReserva = parseInt(resp4);
+    rl.question("Ingrese el costo del seguro (ENTER para usar $15): ", (r1) => {
+        let seg;
 
-                let CostoNoche;
-                let NomTemp;
+        if (r1 === "") {
+            seg = undefined;
+        } else {
+            seg = parseFloat(r1);
+        }
 
-                switch(TempReserva) {
-                    case 1:
-                        NomTemp = "Temporada Baja";
-                        CostoNoche = TarifaNoche;
-                        break;
+        if (seg !== undefined && (isNaN(seg) || seg < 0)) {
+            console.log("Costo de seguro inválido.");
+            rl.close();
+            return;
+        }
 
-                    case 2:
-                        NomTemp = "Temporada Media";
-                        CostoNoche = TarifaNoche * 1.15;
-                        break;
+        rl.question("Ingrese el peso del paquete 1 en kg: ", (r2) => {
+            let p1 = parseFloat(r2);
 
-                    case 3:
-                        NomTemp = "Temporada Alta";
-                        CostoNoche = TarifaNoche * 1.35;
-                        break;
+            if (r2 === "" || isNaN(p1) || p1 < 0) {
+                console.log("Peso inválido.");
+                rl.close();
+                return;
+            }
 
-                    default:
-                        console.log("La opción seleccionada no existe.");
-                        r1.close();
+            rl.question("Ingrese el peso del paquete 2 en kg: ", (r3) => {
+                let p2 = parseFloat(r3);
+
+                if (r3 === "" || isNaN(p2) || p2 < 0) {
+                    console.log("Peso inválido.");
+                    rl.close();
+                    return;
+                }
+
+                rl.question("Ingrese el peso del paquete 3 en kg: ", (r4) => {
+                    let p3 = parseFloat(r4);
+
+                    if (r4 === "" || isNaN(p3) || p3 < 0) {
+                        console.log("Peso inválido.");
+                        rl.close();
                         return;
-                }
+                    }
 
-                let TotalHosp = CostoNoche * CantNoches;
-                let Descuento = 0;
+                    let total = calcularCostoTotal(seg, p1, p2, p3);
 
-                if(CantNoches >= 5) {
-                    Descuento = TotalHosp * 0.10;
-                } else {
-                    Descuento = 0;
-                }
+                    imprimirCotizacion(nom, total);
 
-                let TotalDescuento = TotalHosp - Descuento;
-                let Impuesto = TotalDescuento * 0.05;
-                let TotalFinal = TotalDescuento + Impuesto;
-                let TotalEntero = Math.ceil(TotalFinal);
-
-                let FechaSalida = new Date();
-                FechaSalida.setDate(FechaSalida.getDate() + CantNoches);
-
-                console.log("\n========== REPORTE DE HOSPEDAJE ==========");
-                console.log("Huésped: " + NomHuesp);
-                console.log("Temporada: " + NomTemp);
-                console.log("Noches de hospedaje: " + CantNoches);
-                console.log("Costo por noche: $" + CostoNoche.toFixed(2));
-                console.log("Subtotal: $" + TotalHosp.toFixed(2));
-                console.log("Descuento: $" + Descuento.toFixed(2));
-                console.log("Impuesto de turismo: $" + Impuesto.toFixed(2));
-                console.log("Total final: $" + TotalFinal.toFixed(2));
-                console.log("Total redondeado hacia arriba: $" + TotalEntero);
-                console.log("Fecha de check-out: " + FechaSalida.toLocaleDateString());
-                console.log("===========================================");
-
-                r1.close();
+                    rl.close();
+                });
             });
         });
     });
