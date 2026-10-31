@@ -5,41 +5,23 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-function enviarNotificacionEmail(dest, men) {
-    console.log("[EMAIL A: " + dest + "] -> Mensaje: \"" + men + "\"");
-}
-
-function enviarNotificacionSMS(dest, men) {
-    console.log("[SMS A: " + dest + "] -> Mensaje: \"" + men + "\"");
-}
-
-function procesarAlerta(user, tipo, callback) {
-    let men;
-
-    if (tipo === "seguridad") {
-        men = "Alerta de seguridad";
-    } else if (tipo === "bienvenida") {
-        men = "Bienvenida al sistema";
-    } else {
-        men = "Notificación general";
+function sumarNumeros(num) {
+    if (num === 1) {
+        return 1;
     }
 
-    callback(user, men);
+    return num + sumarNumeros(num - 1);
 }
 
-rl.question("Ingrese el usuario: ", (user) => {
-    rl.question("Tipo de alerta (seguridad/bienvenida): ", (tipo) => {
-        rl.question("Medio de envío (email/sms): ", (medio) => {
+rl.question("Ingrese un numero entero positivo: ", (r) => {
+    const num = Number(r);
 
-            if (medio === "email") {
-                procesarAlerta(user, tipo, enviarNotificacionEmail);
-            } else if (medio === "sms") {
-                procesarAlerta(user, tipo, enviarNotificacionSMS);
-            } else {
-                console.log("Medio de envío no válido");
-            }
+    if (isNaN(num) || !Number.isInteger(num) || num <= 0) {
+        console.log("Error: Debe ingresar un numero entero positivo.");
+    } else {
+        const total = sumarNumeros(num);
+        console.log("La sumatoria total es: " + total);
+    }
 
-            rl.close();
-        });
-    });
+    rl.close();
 });

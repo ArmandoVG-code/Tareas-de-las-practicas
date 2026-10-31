@@ -5,19 +5,25 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-rl.question("Ingrese un número entero positivo: ", (resp) => {
-    let num = parseInt(resp);
-
-    if (resp.trim() === "" || isNaN(num) || num < 2 || !Number.isInteger(Number(resp))) {
-        console.log("Error: ingrese un número entero mayor o igual a 2.");
-    } else {
-        let i = 2;
-
-        while (i <= num) {
-            console.log(i);
-            i += 2;
-        }
+function cuentaRegresiva(num) {
+    if (num === 1) {
+        console.log(num);
+        console.log("¡El tiempo ha terminado!");
+        rl.close();
+        return;
     }
 
-    rl.close();
+    console.log(num);
+    cuentaRegresiva(num - 1);
+}
+
+rl.question("Ingrese un numero entero positivo: ", (r) => {
+    const num = Number(r);
+
+    if (isNaN(num) || !Number.isInteger(num) || num <= 0) {
+        console.log("Error: Debe ingresar un numero entero positivo.");
+        rl.close();
+    } else {
+        cuentaRegresiva(num);
+    }
 });
