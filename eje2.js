@@ -5,36 +5,41 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-rl.question("¿Cuántas notas desea ingresar? ", async (resp) => {
-    let cant = Number(resp);
+function enviarNotificacionEmail(dest, men) {
+    console.log("[EMAIL A: " + dest + "] -> Mensaje: \"" + men + "\"");
+}
 
-    if (resp.trim() === "" || !Number.isInteger(cant) || cant <= 0) {
-        console.log("Ingrese una cantidad válida.");
-        rl.close();
-        return;
+function enviarNotificacionSMS(dest, men) {
+    console.log("[SMS A: " + dest + "] -> Mensaje: \"" + men + "\"");
+}
+
+function procesarAlerta(user, tipo, callback) {
+    let men;
+
+    if (tipo === "seguridad") {
+        men = "Alerta de seguridad";
+    } else if (tipo === "bienvenida") {
+        men = "Bienvenida al sistema";
+    } else {
+        men = "Notificación general";
     }
 
-    let suma = 0;
+    callback(user, men);
+}
 
-    for (let i = 1; i <= cant; i++) {
-        let nota = await new Promise((res) => {
-            rl.question("Ingrese la nota " + i + ": ", res);
+rl.question("Ingrese el usuario: ", (user) => {
+    rl.question("Tipo de alerta (seguridad/bienvenida): ", (tipo) => {
+        rl.question("Medio de envío (email/sms): ", (medio) => {
+
+            if (medio === "email") {
+                procesarAlerta(user, tipo, enviarNotificacionEmail);
+            } else if (medio === "sms") {
+                procesarAlerta(user, tipo, enviarNotificacionSMS);
+            } else {
+                console.log("Medio de envío no válido");
+            }
+
+            rl.close();
         });
-
-        let n = parseFloat(nota);
-
-        if (nota.trim() === "" || !Number.isFinite(n) || n < 0 || n > 10) {
-            console.log("Nota inválida. Intente nuevamente.");
-            i--;
-        } else {
-            suma += n;
-        }
-    }
-
-    let prom = suma / cant;
-
-    console.log("Suma total: " + suma.toFixed(2));
-    console.log("Promedio final: " + prom.toFixed(2));
-
-    rl.close();
+    });
 });

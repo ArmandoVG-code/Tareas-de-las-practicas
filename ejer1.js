@@ -5,41 +5,19 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-function calcularComision(montoVentas, porcentajeComision = 5) {
-    return montoVentas * (porcentajeComision / 100);
+const tieneLongitudValida = (pass) => pass.length >= 8;
+
+function registrarUsuario(user, pass) {
+    if (tieneLongitudValida(pass)) {
+        return "Registro exitoso para " + user;
+    } else {
+        return "Error: La contraseña es demasiado corta";
+    }
 }
 
-rl.question("Ingrese el monto total de ventas: ", (r1) => {
-    let monto = Number(r1);
-
-    if (r1 === "" || isNaN(monto)) {
-        console.log("Error: ingrese un monto válido.");
-        rl.close();
-        return;
-    }
-
-    rl.question("Ingrese el porcentaje de comisión (ENTER para usar 5%): ", (r2) => {
-        let porc;
-
-        if (r2 === "") {
-            porc = undefined;
-        } else {
-            porc = Number(r2);
-        }
-
-        if (porc !== undefined && (isNaN(porc) || porc < 0)) {
-            console.log("Porcentaje inválido.");
-            rl.close();
-            return;
-        }
-
-        let com = calcularComision(monto, porc);
-
-        console.log("\n--- COMISIÓN POR VENTAS ---");
-        console.log("Monto de ventas: $" + monto.toFixed(2));
-        console.log("Porcentaje: " + (porc === undefined ? 5 : porc) + "%");
-        console.log("Comisión ganada: $" + com.toFixed(2));
-
+rl.question("Ingrese su usuario: ", (user) => {
+    rl.question("Ingrese su contraseña: ", (pass) => {
+        console.log(registrarUsuario(user, pass));
         rl.close();
     });
 });
